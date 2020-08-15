@@ -2,7 +2,10 @@ package com.privateBaking.CustomerProfileService.Controller;
 
 import java.sql.Date;
 import java.util.Optional;
+//import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,16 +15,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.privateBaking.CustomerProfileService.Model.Cus;
 import com.privateBaking.CustomerProfileService.Model.CustomerInfoDTO;
 import com.privateBaking.CustomerProfileService.Model.CustomerProfile;
-import com.privateBaking.CustomerProfileService.Model.CustomerStatusResponse;
+import com.privateBaking.CustomerProfileService.Model.CustomerStatus;
 import com.privateBaking.CustomerProfileService.Model.DiligenceService;
 import com.privateBaking.CustomerProfileService.Repository.CustomerProfileRepository;
 
+//import ch.qos.logback.classic.Logger;
+
 @RestController
 public class CustomerProfileController {
-	//private static final Logger logger = Logger.getLogger(CustomerProfileController.class);
+	private static final Logger logger = LoggerFactory.getLogger(CustomerProfileController.class);
 	
 	@Autowired
 	CustomerProfileRepository customerProfileRepository;
@@ -39,6 +43,7 @@ public class CustomerProfileController {
 			@RequestParam String address, @RequestParam String state, @RequestParam String country,
 			@RequestParam String panNo,@RequestParam Date dob,@RequestParam Long accountNo)
 			 {
+		logger.info("customer profile service post method..");
 		customerProfile= new CustomerProfile();
 		customerProfile.setName(customerName);
 		customerProfile.setEmail(email);
@@ -92,18 +97,16 @@ public class CustomerProfileController {
 		if (customerInfoDTO.getAccountNo()!=null) {
 		customerProfile.setAccountNo(customerInfoDTO.getAccountNo());
 		}
+		logger.info("customer profile service update method..");
 		customerProfileRepository.saveAndFlush(customerProfile);
 		
 	}
 	@GetMapping("customer/{customerId}/getStatus")
-	public Cus getDiligenceStatus(@PathVariable  Long customerId) {
-		//Optional<CustomerDueDiligence> diligenceOptional = customerDueDiligenceRepository.findById(customerId);
-		//CustomerDueDiligence diligence = diligenceOptional.get();
-		Cus cus = new Cus();
-//		CustomerStatusResponse customerStatusResponse = new CustomerStatusResponse();
-		//customerStatusResponse = diligenceService.getStatusDetails(customerId);
-		cus=diligenceService.getStatusDetails(customerId);
-		return cus;
+	public  CustomerStatus getDiligenceStatus(@PathVariable  Long customerId) {
+		logger.info("customer profile service calling deligence method..");
+		 CustomerStatus  customerStatus = new  CustomerStatus();
+		 customerStatus=diligenceService.getStatusDetails(customerId);
+		return customerStatus;
 				
 	}
 }

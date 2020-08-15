@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface DiligenceService  {
 
 	@GetMapping(value = "/diligence-service/customer/{customerId}/getStatus")
-	public Cus getStatusDetails(@PathVariable Long customerId);
+	public CustomerStatus getStatusDetails(@PathVariable Long customerId);
 }
