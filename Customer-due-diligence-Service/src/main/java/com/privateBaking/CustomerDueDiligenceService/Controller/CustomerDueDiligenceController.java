@@ -29,12 +29,19 @@ public class CustomerDueDiligenceController {
 	
 	CustomerDueDiligence customerDueDiligence;
 	
-
+	@HystrixCommand(fallbackMethod="fallBackMethod" )
 	@GetMapping("customer/{customerId}/getStatus")
 	public CustomerDueDiligence getDiligenceStatus(@PathVariable  Long customerId) {
+		CustomerDueDiligence diligence = new CustomerDueDiligence();
+//		try {
 		logger.info("CustomerDueDiligence calling get method...");
 		Optional<CustomerDueDiligence> diligenceOptional = customerDueDiligenceRepository.findById(customerId);
-		CustomerDueDiligence diligence = diligenceOptional.get();
+		 diligence = diligenceOptional.get();
+		
+//		}catch(Exception e) {
+//			logger.info("error in CustomerDueDiligence calling get method...");
+			//getCustomerStatusWithFaultTolerance();
+//		}
 		return diligence;
 	}
 	
@@ -45,7 +52,7 @@ public class CustomerDueDiligenceController {
 		throw new RuntimeException("issue happened");
 	}
 	
-	public CustomerDueDiligence fallBackMethod() {
+	public CustomerDueDiligence fallBackMethod(Long id) {
 		//return new Employee(444,"Ram","Kumar",null);
 //		return new CustomerDueDiligence(444,employeeConfiguration.getDefaultFirstName(),
 //				employeeConfiguration.getDefaultLastName(),null);
