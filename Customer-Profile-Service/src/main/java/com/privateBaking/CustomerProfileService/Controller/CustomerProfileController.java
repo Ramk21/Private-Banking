@@ -56,7 +56,13 @@ public class CustomerProfileController {
 		customerProfile.setPanNo(panNo);
 		customerProfile.setDob(dob);
 		customerProfile.setAccountNo(accountNo);
-		customerProfileRepository.saveAndFlush(customerProfile);		
+		customerProfileRepository.saveAndFlush(customerProfile);	
+		CustomerStatus  customerStatus = new  CustomerStatus();
+		Optional<CustomerProfile> customerProfileEntity = customerProfileRepository.findById(customerProfile.getCustomerId());
+		customerProfile= customerProfileEntity.get();
+		//getDiligenceStatus(customerProfile.getCustomerId());
+		diligenceService.getStatusDetails(customerProfile.getCustomerId());
+		
 	}
 	
 	@PutMapping("customer/{customerId}/updateCustomerInfo")
@@ -64,50 +70,68 @@ public class CustomerProfileController {
 		customerProfile= new CustomerProfile();
 		Optional<CustomerProfile> customerProfileEntity = customerProfileRepository.findById(customerId);
 		customerProfile= customerProfileEntity.get();
-		if(!customerInfoDTO.getName().isEmpty() && customerInfoDTO.getName()!=null) {
-		customerProfile.setName(customerInfoDTO.getName());
-		}
-		if(!customerInfoDTO.getEmail().isEmpty() && customerInfoDTO.getEmail()!=null) {
-		customerProfile.setEmail(customerInfoDTO.getEmail());
-		}
-		if (customerInfoDTO.getMobileNo()!=null) {
-		customerProfile.setMobileNo(customerInfoDTO.getMobileNo());
-		}
-		if(!customerInfoDTO.getUserName().isEmpty() && customerInfoDTO.getUserName()!=null) {
-		customerProfile.setUserName(customerInfoDTO.getUserName());
-		}
-		if(!customerInfoDTO.getPasswrd().isEmpty() && customerInfoDTO.getPasswrd()!=null) {
-		customerProfile.setPasswrd(customerInfoDTO.getPasswrd());
-		}
-		if(!customerInfoDTO.getAddress().isEmpty() && customerInfoDTO.getAddress()!=null) {
-		customerProfile.setAddress(customerInfoDTO.getAddress());
-		}
-		if(!customerInfoDTO.getState().isEmpty() && customerInfoDTO.getState()!=null) {
-		customerProfile.setState(customerInfoDTO.getState());
-		}
-		if(!customerInfoDTO.getCountry().isEmpty() && customerInfoDTO.getCountry()!=null) {
-		customerProfile.setCountry(customerInfoDTO.getCountry());
-		}
-		if(!customerInfoDTO.getPanNo().isEmpty() && customerInfoDTO.getPanNo()!=null) {
-		customerProfile.setPanNo(customerInfoDTO.getPanNo());
-		}
-		if(customerInfoDTO.getDob()!=null) {
-		customerProfile.setDob(customerInfoDTO.getDob());
-		}
-		if (customerInfoDTO.getAccountNo()!=null) {
-		customerProfile.setAccountNo(customerInfoDTO.getAccountNo());
-		}
-		logger.info("customer profile service update method..");
-		customerProfileRepository.saveAndFlush(customerProfile);
+		Optional<CustomerInfoDTO> optionalCustomerInfoDTO = Optional.ofNullable(customerInfoDTO);
+		if(optionalCustomerInfoDTO.isPresent()) {			
+			Optional<String> optionalCustomerName= Optional.ofNullable(optionalCustomerInfoDTO.get().getName()).filter(name->!name.isEmpty());
+			if(optionalCustomerName.isPresent()) {
+			customerProfile.setName(optionalCustomerName.get());	
+			}
 		
+			Optional<String> optionalEmail= Optional.ofNullable(optionalCustomerInfoDTO.get().getEmail()).filter(email->!email.isEmpty());
+			if(optionalEmail.isPresent()) 
+			customerProfile.setEmail(optionalEmail.get());
+		
+		
+		Optional<Long> optionalMobileNo= Optional.ofNullable(optionalCustomerInfoDTO.get().getMobileNo());
+		if(optionalMobileNo.isPresent()) 
+		customerProfile.setMobileNo(optionalMobileNo.get());
+		
+		Optional<String> optionalUserName= Optional.ofNullable(optionalCustomerInfoDTO.get().getUserName()).filter(userName->!userName.isEmpty());
+		if(optionalUserName.isPresent()) 
+		customerProfile.setUserName(optionalUserName.get());
+		
+		Optional<String> optionalPassword= Optional.ofNullable(optionalCustomerInfoDTO.get().getPasswrd()).filter(passwrd->!passwrd.isEmpty());
+		if(optionalPassword.isPresent()) 
+		customerProfile.setPasswrd(optionalPassword.get());
+
+		Optional<String> optionalAddress= Optional.ofNullable(optionalCustomerInfoDTO.get().getAddress()).filter(address->!address.isEmpty());
+		if(optionalAddress.isPresent()) 
+		customerProfile.setAddress(optionalAddress.get());
+	
+		Optional<String> optionalState= Optional.ofNullable(optionalCustomerInfoDTO.get().getState()).filter(state->!state.isEmpty());
+		if(optionalState.isPresent()) 
+		customerProfile.setState(optionalState.get());
+
+		Optional<String> optionalCountry= Optional.ofNullable(optionalCustomerInfoDTO.get().getState()).filter(state->!state.isEmpty());
+		if(optionalCountry.isPresent()) 
+		customerProfile.setCountry(optionalCountry.get());
+
+		Optional<String> optionalPanNo= Optional.ofNullable(optionalCustomerInfoDTO.get().getPanNo()).filter(panNo->!panNo.isEmpty());
+		if(optionalPanNo.isPresent()) 
+		customerProfile.setPanNo(optionalPanNo.get());
+
+		Optional<Date> optionalDob= Optional.ofNullable(optionalCustomerInfoDTO.get().getDob());
+		if(optionalDob.isPresent()) 
+		customerProfile.setDob(optionalDob.get());
+
+		Optional<Long> optionalAcctno= Optional.ofNullable(optionalCustomerInfoDTO.get().getAccountNo());
+		if(optionalAcctno.isPresent()) 
+		customerProfile.setAccountNo(optionalAcctno.get());
+		}
+		
+		logger.info("customer profile service update method..");
+		customerProfileRepository.saveAndFlush(customerProfile);		
 	}
-	@GetMapping("customer/{customerId}/getStatus")
-	public  CustomerStatus getDiligenceStatus(@PathVariable  Long customerId) {
-		logger.info("customer profile service calling deligence method..");
-		 CustomerStatus  customerStatus = new  CustomerStatus();
-		 customerStatus=diligenceService.getStatusDetails(customerId);
-		return customerStatus;
-				
-	}
+	
+	/*
+	 * @GetMapping("customer/{customerId}/getStatus") public CustomerStatus
+	 * getDiligenceStatus(@PathVariable Long customerId) {
+	 * logger.info("customer profile service calling deligence method..");
+	 * CustomerStatus customerStatus = new CustomerStatus();
+	 * customerStatus=diligenceService.getStatusDetails(customerId); return
+	 * customerStatus;
+	 * 
+	 * }
+	 */
 }
 
