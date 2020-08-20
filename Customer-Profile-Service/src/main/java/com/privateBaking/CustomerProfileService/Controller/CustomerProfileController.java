@@ -57,7 +57,7 @@ public class CustomerProfileController {
 		customerProfile.setDob(dob);
 		customerProfile.setAccountNo(accountNo);
 		customerProfileRepository.saveAndFlush(customerProfile);	
-		CustomerStatus  customerStatus = new  CustomerStatus();
+	//	CustomerStatus  customerStatus = new  CustomerStatus();
 		Optional<CustomerProfile> customerProfileEntity = customerProfileRepository.findById(customerProfile.getCustomerId());
 		customerProfile= customerProfileEntity.get();
 		//getDiligenceStatus(customerProfile.getCustomerId());
